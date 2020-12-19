@@ -24,7 +24,7 @@ This will generate a Team Profile for your Team. Just answer the questions accur
 
 ### WalkThrough Video
 
-<https://drive.google.com/file/d/1SOUr-QNiazdiZqXh8F8N_0vC3LJ8pnfj/view>
+[Walk Through Video](./assets/team-portfolio-generator.mp4)
 
 ### Sample ReadME:
 [Sample HTML FILE](./assets/sample.html)
