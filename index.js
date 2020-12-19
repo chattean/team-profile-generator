@@ -1,18 +1,22 @@
+//requiring libs to use
 const inquirer = require('inquirer');
+const path = require("path");
+const fs = require("fs");
+
 //requiring constructors
 const Manager = require('./lib/Manager');
 const Engineer = require('./lib/Engineer');
 const Intern = require('./lib/Intern');
 
-const generatePage = require('./src/page-template');
-const {writeFile} = require('./utils/generate-site');
+// Making the file storage variables
+const dist = path.resolve(__dirname, "dist");
+const HTML = path.join(dist, "index.html");
 
 
+// Rendering the Page-template
+const PageTemplate = require("./src/page-template")
 
-//Array to hold the records of all the team we would enter
-const teamMembers = [];
-
-
+// This will get the role of what we need to add. 
 const getNextRole = () => {
  return inquirer.prompt(
     {
@@ -23,7 +27,8 @@ const getNextRole = () => {
     }
   )};
 
-
+// This Inquirer function will be called for all Roles but it will adapt the question depending on the role chosen.
+// It will always run through once to set up a Manager for the team 
 const getEmployeeInfo = (role) => {
   return inquirer.prompt([
     {
@@ -67,7 +72,7 @@ const getEmployeeInfo = (role) => {
     }
   ]);
 };
-
+// Reusing the Employee inquirer prompt and adding on Manager Office Number
 const getManagerInfo =  async () => {
   const {employeeName, employeeID, employeeEmail} = await getEmployeeInfo("Manager")
   const {officeNumber} = await inquirer.prompt({
@@ -85,12 +90,12 @@ const getManagerInfo =  async () => {
     });
     return {employeeName, employeeID, employeeEmail, officeNumber};
 };
-
+// Reusing the Employee inquirer prompt and adding on Engineer Github
 const getEngineerInfo =  async () => {
   const {employeeName, employeeID, employeeEmail} = await getEmployeeInfo("Engineer")
-    const {github} = await inquirer.prompt({
+    const {GitHub} = await inquirer.prompt({
       type:"input",
-      name:"github",
+      name:"GitHub",
       message:"What is the Engineer's GitHub? (Required)",
       validate: githubInput => {
         if (githubInput) {
@@ -101,9 +106,10 @@ const getEngineerInfo =  async () => {
         }
       }
     });
-    return {employeeName, employeeID, employeeEmail, github};
+    return {employeeName, employeeID, employeeEmail, GitHub};
 };
 
+// Reusing the Employee inquirer prompt and adding on Intern school question
 const getInternInfo =  async () => {
   const {employeeName, employeeID, employeeEmail} = await getEmployeeInfo("Intern")
     const {internSchool} = await inquirer.prompt({
@@ -122,31 +128,35 @@ const getInternInfo =  async () => {
     return {employeeName, employeeID, employeeEmail, internSchool};
 };
 
-
 //Using IFE to make a async function to use await as well as simplify the code and make it readable
-// this is the main function that will call everthing else
+// this is the main function that will call everything else and its doesn't have to have a variable assigned 
+// to the function call as we are not going to reuse this function call anywhere else. This is only called here.
 (async () => {
-  // Creating an array of employees
+  //Array to hold the records of all the team we would enter
   const employees = [];
-  // const managerInfo = await getMangerInfo();
   employees.push(await getManagerInfo().then(
     ({ employeeName, employeeID, employeeEmail, officeNumber}) =>
     new Manager(employeeName, employeeID, employeeEmail, officeNumber)
   ))
 
+  // Setting Variable to false to get a condition to loop
   let shouldExit = false;
-
+  
+  //Loop where user can add more team members 
   while(!shouldExit){
-
+    // Destructing and getting the role variable from the getNextRole function
     const {role} = await getNextRole();
+    // using the above variable in a switch statement and do different push to the employees Array
     switch(role){
       case "Engineer":
+        // we can use await here to return a promise as the whole function is an async func
         employees.push(await getEngineerInfo().then(
-        ({employeeName, employeeID, employeeEmail, github}) =>
-        new Engineer(employeeName, employeeID, employeeEmail, github)
+        ({employeeName, employeeID, employeeEmail, GitHub}) =>
+        new Engineer(employeeName, employeeID, employeeEmail, GitHub)
       ));
         break;
       case "Intern":
+        // we can use await here to return a promise as the whole function is an async func
         employees.push(await getInternInfo().then(
         ({employeeName, employeeID, employeeEmail, internSchool}) =>
         new Intern(employeeName, employeeID, employeeEmail, internSchool)
@@ -157,42 +167,14 @@ const getInternInfo =  async () => {
         break;
     }
     }
-
-  
-
-  
-  //generate html
-  //write html
+    if (!fs.existsSync(dist)) {
+      fs.mkdirSync(dist);
+    }
+    fs.writeFileSync(HTML, PageTemplate(employees));
   return employees;
 })().then((employeeData) => {
   console.log(employeeData);
+})
+  .catch(err =>{
+    console.log(err);
 });
-
-    
-
-//       .then(employeeData => {
-//         employeeData.push(employeeData);
-//         // if (employeeData.confirmAddployee) {
-//         //   return promptEmployee(employeeData, );
-//         // } else {
-//           return employeeData; 
-//       });
-// };
-
-//   promptEmployee()
-//     .then(employeeData => {
-//         console.log(employeeData);
-//         return generatePage(employeeData);
-//     })
-//     .then(employeePage => {
-//         return writeFile(employeePage);
-//     })    
-//     .catch(err =>{
-//     console.log(err);
-//     });
-// // promptEmployee
-// //   .then((employeeData, 'Manager') => {
-// //       console.log(employeeData,employeeRole)
-// //   }
-
-// //   const promptEngineer = (employeeData, employeeRole) =>{}

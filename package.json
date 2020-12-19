@@ -7,7 +7,8 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,7 @@
   },
   "homepage": "https://github.com/chattean/team-profile-generator#readme",
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.1",
     "inquirer": "^7.3.3"
   },
   "devDependencies": {
