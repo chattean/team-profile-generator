@@ -24,7 +24,8 @@ This will generate a Team Profile for your Team. Just answer the questions accur
 
 ### WalkThrough Video
 
-[Walk Through Video](./assets/team-portfolio-generator.mp4)
+[Walk Through Video](./assets/team-portfolio-generator.mp4)<br />
+[Test Passed](./assets/team-portfolio-tests.gif)
 
 ### Sample ReadME:
 [Sample HTML FILE](./assets/sample.html)
@@ -39,13 +40,14 @@ Please contribute safely
     
 
 ## Tests
-
 Please take a look at the __tests__ folder in the repository, it has the following tests:
 Employee.js 
 Engineer.js
 Intern.js
 Manager.js
-    
+
+![](./assets/team-portfolio-tests.gif)
+
 
 ## Questions
 ### Where is my GitHub repository?
